@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Finalizar Pedido</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label class="form-label">Nombre completo</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="tel" name="telefono" class="form-control" required>
+        </div>
+        
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="domicilio" id="domicilio" class="form-check-input">
+            <label for="domicilio" class="form-check-label">Requiero domicilio</label>
+        </div>
+        
+        <div class="mb-3" id="direccion-field" style="display: none;">
+            <label class="form-label">Dirección</label>
+            <input type="text" name="direccion" class="form-control">
+        </div>
+        
+        <button type="submit" class="btn btn-success">Enviar pedido por WhatsApp</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('domicilio').addEventListener('change', function() {
+    document.getElementById('direccion-field').style.display = this.checked ? 'block' : 'none';
+});
+</script>
+{% endblock %}

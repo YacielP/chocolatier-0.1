@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Nuestros Chocolates</h2>
+    
+    <div class="btn-group mb-4">
+        <a href="?categoria=todos" class="btn btn-outline-success">Todos</a>
+        {% for categoria in categorias %}
+        <a href="?categoria={{ categoria.nombre }}" class="btn btn-outline-success">{{ categoria.nombre }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        {% for producto in productos %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text">{{ producto.descripcion }}</p>
+                    <p class="fw-bold">${{ producto.precio }}</p>\
+                    <button class="btn btn-success add-to-cart" 
+                        data-id="{{ producto.id|stringformat:"d" }}"
+                        data-name="{{ producto.nombre }}"
+                        data-price="{{ producto.precio }}">
+                        Añadir al carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', async function() {
+            const productId = this.getAttribute('data-id');
+            console.log("Intentando añadir producto ID:", productId);  // Debug 1
+            
+            try {
+                const response = await fetch('/tienda/agregar-al-carrito/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `producto_id=${productId}&cantidad=1`
+                });
+                
+                console.log("Respuesta recibida:", response);  // Debug 2
+                
+                const data = await response.json();
+                console.log("Datos parseados:", data);  // Debug 3
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en el servidor');
+                }
+                
+                if (data.success) {
+                    alert(data.message || 'Producto añadido al carrito');
+                    
+                    // Actualizar contador del carrito (si existe)
+                    const cartCounter = document.getElementById('carrito-count');
+                    if (cartCounter && data.carrito_count !== undefined) {
+                        cartCounter.textContent = data.carrito_count;
+                    }
+                }
+            } catch (error) {
+                console.error("Error completo:", error);
+                alert("Error: " + error.message);
+            }
+        });
+    });
+    </script>
+{% endblock %}
