@@ -123,5 +123,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Para producción
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Ruta global (opcional)
+]
+
+ALLOWED_HOSTS = [
+    'yacielpa.pythonanywhere.com',
+    'localhost',  # Para desarrollo local
+    '127.0.0.1'   # Para desarrollo local
+]

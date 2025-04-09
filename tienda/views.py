@@ -1,5 +1,24 @@
 from django.shortcuts import render
 from .models import Producto, Categoria  # Importamos los modelos
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+
+@require_GET
+def obtener_carrito(request):
+    try:
+        carrito = request.session.get('carrito', {})
+        total_items = sum(carrito.values()) if carrito else 0
+        
+        return JsonResponse({
+            'success': True,
+            'total_items': total_items
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
 
 # Vista para la página de inicio
 def inicio(request):
